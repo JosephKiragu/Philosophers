@@ -1,4 +1,4 @@
-# Dining Philosophers Problem
+# The Dining Philosophers Problem
 ![My Image](https://raw.githubusercontent.com/JosephKiragu/Philosophers/main/images/yakuza.PNG)
 
 
