@@ -23,7 +23,7 @@ bool init_simulation(t_simulation *simulation)
     {
         simulation->philosophers[i].id = i + 1;
         simulation->philosophers[i].left_fork = &simulation->forks[i];
-        simulation->philosophers[i].right_fork = &simulation->forks[(i + 1) % simulation->num_philosophers];
+        simulation->philosophers[i].right_fork = &simulation->forks[(i + 1) % simulation->num_philosophers]; // Ensures last philosopher's right fork is first's left
         simulation->philosophers[i].last_meal = get_timestamp();
         simulation->philosophers[i].meals_eaten = 0;
         simulation->philosophers[i].is_dead = false;
