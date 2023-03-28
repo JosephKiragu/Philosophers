@@ -56,8 +56,9 @@ void run_simulation(t_simulation *simulation)
     }
 
     // Wait for the philosopher threads to finish
-	/*The purpose of this loop is to make sure the main thread waits for all philosopher threads to complete their execution 
-	before proceeding, ensuring proper cleanup and termination of the program.
+	/*This loop iterates through all the philosopher threads again, but this time it calls pthread_join() for each thread. 
+	The pthread_join() function waits for the specified thread to finish its execution. The main thread will only 
+	proceed after all the philosopher threads have completed (i.e., when the simulation has ended).
 	*/
     for (i = 0; i < simulation->num_philosophers; i++)
     {
