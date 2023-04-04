@@ -1,43 +1,104 @@
 #include "philo.h"
 
-// Initialize the simulation
-bool init_simulation(t_simulation *simulation)
+// // Initialize the simulation
+// bool init_simulation(t_simulation *simulation)
+// {
+//     int i;
+
+//     // Allocate memory for philosophers and forks
+//     simulation->philosophers = malloc(sizeof(t_philosopher) * simulation->num_philosophers);
+//     simulation->forks = malloc(sizeof(pthread_mutex_t) * simulation->num_philosophers);
+//     if (!simulation->philosophers || !simulation->forks)
+//         return false;
+
+//     // Initialize forks mutexes
+//     for (i = 0; i < simulation->num_philosophers; i++)
+//     {
+//         if (pthread_mutex_init(&simulation->forks[i], NULL) != 0)
+//             return false;
+//     }
+
+//     // Initialize the philosophers
+//     for (i = 0; i < simulation->num_philosophers; i++)
+//     {
+//         simulation->philosophers[i].id = i + 1;
+//         simulation->philosophers[i].left_fork = &simulation->forks[i];
+//         simulation->philosophers[i].right_fork = &simulation->forks[(i + 1) % simulation->num_philosophers]; // Ensures last philosopher's right fork is first's left
+//         simulation->philosophers[i].last_meal = get_timestamp();
+//         simulation->philosophers[i].meals_eaten = 0;
+//         simulation->philosophers[i].is_dead = false;
+//         simulation->philosophers[i].simulation = simulation;
+//     }
+
+//     // Initialize the state mutex
+//     if (pthread_mutex_init(&simulation->state_mutex, NULL) != 0)
+//         return false;
+
+//     simulation->simulation_ended = false;
+
+//     return true;
+// }
+
+
+
+
+
+static bool	init_forks(t_simulation *simulation)
 {
     int i;
-
-    // Allocate memory for philosophers and forks
-    simulation->philosophers = malloc(sizeof(t_philosopher) * simulation->num_philosophers);
-    simulation->forks = malloc(sizeof(pthread_mutex_t) * simulation->num_philosophers);
-    if (!simulation->philosophers || !simulation->forks)
-        return false;
-
-    // Initialize forks mutexes
-    for (i = 0; i < simulation->num_philosophers; i++)
+    simulation->forks = malloc(sizeof(pthread_mutex_t) * \
+                                simulation->num_philosophers);
+    if (!simulation->forks)
+        return (false);
+    i = 0;
+    while (i < simulation->num_philosophers)
     {
         if (pthread_mutex_init(&simulation->forks[i], NULL) != 0)
-            return false;
+            return (false);
+        i++;
     }
+    return (true);
+}
 
-    // Initialize the philosophers
-    for (i = 0; i < simulation->num_philosophers; i++)
+static bool	init_philosophers(t_simulation *simulation)
+{
+    int	i;
+
+    simulation->philosophers = malloc(sizeof(t_philosopher) * \
+                                        simulation->num_philosophers);
+    if (!simulation->philosophers)
+        return (false);
+    i = 0;
+    while (i < simulation->num_philosophers)
     {
         simulation->philosophers[i].id = i + 1;
         simulation->philosophers[i].left_fork = &simulation->forks[i];
-        simulation->philosophers[i].right_fork = &simulation->forks[(i + 1) % simulation->num_philosophers]; // Ensures last philosopher's right fork is first's left
+        simulation->philosophers[i].right_fork = &simulation->forks[(i + 1) \
+                                                    % simulation->num_philosophers];
         simulation->philosophers[i].last_meal = get_timestamp();
         simulation->philosophers[i].meals_eaten = 0;
         simulation->philosophers[i].is_dead = false;
         simulation->philosophers[i].simulation = simulation;
+        i++;
     }
-
-    // Initialize the state mutex
-    if (pthread_mutex_init(&simulation->state_mutex, NULL) != 0)
-        return false;
-
-    simulation->simulation_ended = false;
-
-    return true;
+    return (true);
 }
+
+bool	init_simulation(t_simulation *simulation)
+{
+    if (!init_forks(simulation))
+        return (false);
+    if (!init_philosophers(simulation))
+        return (false);
+    if (pthread_mutex_init(&simulation->state_mutex, NULL) != 0)
+        return (false);
+    simulation->simulation_ended = false;
+    return (true);
+}
+
+
+
+
 
 // Run the simulation by creating and starting philosopher threads
 void run_simulation(t_simulation *simulation)

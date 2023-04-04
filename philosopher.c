@@ -51,7 +51,10 @@ bool eat(t_philosopher *philosopher)
     if (pthread_mutex_unlock(philosopher->right_fork) != 0 || pthread_mutex_unlock(philosopher->left_fork) != 0)
         return false; // Failed to unlock both forks
 
-    return true;
+	// Adding a delay
+	usleep(philosopher->simulation->time_to_eat * 1000);
+
+    return (true);
 }
 
 // Check if a philosopher has died (exceeded the time_to_die threshold)
@@ -86,6 +89,14 @@ void *philosopher_routine(void *arg)
     // Continue executing the routine until the philosopher is dead or the simulation has ended
     while (!philosopher->is_dead && !philosopher->simulation->simulation_ended)
     {
+		// Add this condition to handle the case with only one philosopher
+		if (philosopher->simulation->num_philosophers == 1)
+		{
+			usleep(philosopher->simulation->time_to_die * 1000);
+			print_status(philosopher->simulation, philosopher->id, "died");
+			stop_simulation(philosopher->simulation);
+			break;
+		}
 		if (check_death(philosopher))
 			break;
         // Attempt to eat; if the philosopher fails to eat, break the loop
